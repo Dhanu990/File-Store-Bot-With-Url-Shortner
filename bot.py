@@ -1,4 +1,3 @@
-# Import necessary modules and configurations
 import os
 import asyncio
 import traceback
@@ -40,7 +39,7 @@ async def start(bot: Client, cmd: Message):
         back = await handle_force_sub(bot, cmd)
         if back == 400:
             return
-    
+
     usr_cmd = cmd.text.split("_", 1)[-1]
     if usr_cmd == "/start":
         await add_user_to_database(bot, cmd)
@@ -96,16 +95,19 @@ async def handle_media(bot: Client, message: Message):
             if back == 400:
                 return
         if message.from_user.id in Config.BANNED_USERS:
-            await message.reply_text("Sorry, You are banned!\n\nContact [𝙎𝙪𝙥𝙝𝙤𝙫𝙚 𝙂𝙧𝙤𝙪𝙥](https://t.me/filmyspotupdate)",
+            await message.reply_text("Sorry, You are banned!\n\nContact [𝙎𝙪𝙥𝙤𝙫𝙚 𝙂𝙧𝙤𝙪𝙥](https://t.me/filmyspotupdate)",
                          disable_web_page_preview=True)
             return
         if Config.OTHER_USERS_CAN_SAVE_FILE is False:
             return
+        if message.message_id not in MediaList:
+            MediaList[message.message_id] = []
+        MediaList[message.message_id].append(message)
         await message.reply_text(
             text="**Choose an option from below:**",
             reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("Save in Batch", callback_data="addToBatchTrue")],
-                [InlineKeyboardButton("Get Sharable Link", callback_data="addToBatchFalse")]
+                [InlineKeyboardButton("Save in Batch", callback_data=f"addToBatch_{message.message_id}")],
+                [InlineKeyboardButton("Get Sharable Link", callback_data=f"getSharableLink_{message.message_id}")]
             ]),
             quote=True,
             disable_web_page_preview=True
@@ -148,14 +150,31 @@ async def handle_banned_users(bot: Client, message: Message):
 # Handle clearing user batch
 @Bot.on_message(filters.private & filters.command("clear_batch"))
 async def handle_clear_user_batch(bot: Client, message: Message):
-    MediaList[f"{str(message.from_user.id)}"] = []
+    if message.message_id in MediaList:
+        del MediaList[message.message_id]
     await message.reply_text("Cleared your batch files successfully!")
 
 # Handle callback queries for buttons
 @Bot.on_callback_query()
 async def handle_button(bot: Client, cmd: CallbackQuery):
-    # Handle callback query logic for buttons
-    pass
+    data = cmd.data
+    chat_id = cmd.message.chat.id
+
+    if data.startswith("addToBatch_"):
+        _, message_id = data.split("_")
+        if message_id in MediaList:
+            user_id = cmd.from_user.id
+            for message in MediaList[message_id]:
+                await send_media_and_reply(bot, user_id, message.message_id)
+            del MediaList[message_id]
+    elif data.startswith("getSharableLink_"):
+        _, message_id = data.split("_")
+        if message_id in MediaList:
+            # Create a sharable link for all the files in MediaList[message_id]
+            file_ids = [message.message_id for message in MediaList[message_id]]
+            sharable_link = create_sharable_link(file_ids)  # You need to implement this function
+            await bot.send_message(chat_id, f"Here's the sharable link: {sharable_link}")
+            del MediaList[message_id]
 
 # Run the bot
 Bot.run()
