@@ -97,7 +97,7 @@ async def handle_media(bot: Client, message: Message):
                 return
         if message.from_user.id in Config.BANNED_USERS:
             await message.reply_text("Sorry, You are banned!\n\nContact [𝙎𝙪𝙥𝙝𝙤𝙫𝙚 𝙂𝙧𝙤𝙪𝙥](https://t.me/filmyspotupdate)",
-                                     disable_web_page preview=True)
+                         disable_web_page_preview=True)
             return
         if Config.OTHER_USERS_CAN_SAVE_FILE is False:
             return
