@@ -59,7 +59,7 @@ async def start(bot: Client, cmd: Message):
                     ],
                     [
                         InlineKeyboardButton("Support Group", url="https://t.me/filmyspotupdate"),
-                        InlineKeyboardButton("YouTube Channel", url="#")
+                        InlineKeyboardButton("Movie Group", url="https://t.me/filmyspotmovies1")
                     ]
                 ]
             )
