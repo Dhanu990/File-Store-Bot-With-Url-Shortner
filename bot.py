@@ -89,15 +89,15 @@ async def start(bot: Client, cmd: Message):
 # Handle media messages
 @Bot.on_message((filters.document | filters.video | filters.audio | filters.photo) & ~filters.chat(Config.DB_CHANNEL))
 async def handle_media(bot: Client, message: Message):
-    if message.chat.type == filters.ChatType.PRIVATE:
+    if message.is_private:
         await add_user_to_database(bot, message)
         if Config.UPDATES_CHANNEL is not None:
             back = await handle_force_sub(bot, message)
             if back == 400:
                 return
         if message.from_user.id in Config.BANNED_USERS:
-            await message.reply_text("Sorry, You are banned!\n\nContact [𝙎𝙪𝙥𝙝𝙤𝙧𝙩 𝙂𝙧𝙤𝙪𝙥](https://t.me/filmyspotupdate)",
-                                     disable_web_page_preview=True)
+            await message.reply_text("Sorry, You are banned!\n\nContact [𝙎𝙪𝙥𝙝𝙤𝙫𝙚 𝙂𝙧𝙤𝙪𝙥](https://t.me/filmyspotupdate)",
+                                     disable_web_page preview=True)
             return
         if Config.OTHER_USERS_CAN_SAVE_FILE is False:
             return
