@@ -172,9 +172,8 @@ async def handle_button(bot: Client, cmd: CallbackQuery):
         if message_id in MediaList:
             # Create a sharable link for all the files in MediaList[message_id]
             file_ids = [message.message_id for message in MediaList[message_id]]
-            sharable_link = create_sharable_link(file_ids)  # You need to implement this function
+            sharable_link = create_sharable_link(file_ids)  # Implement this function
             await bot.send_message(chat_id, f"Here's the sharable link: {sharable_link}")
             del MediaList[message_id]
-
 # Run the bot
 Bot.run()
