@@ -89,7 +89,7 @@ async def start(bot: Client, cmd: Message):
 # Handle media messages
 @Bot.on_message((filters.document | filters.video | filters.audio | filters.photo) & ~filters.chat(Config.DB_CHANNEL))
 async def handle_media(bot: Client, message: Message):
-    if message.is_private:
+    if message.chat.type == "private":
         await add_user_to_database(bot, message)
         if Config.UPDATES_CHANNEL is not None:
             back = await handle_force_sub(bot, message)
