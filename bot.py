@@ -110,8 +110,8 @@ async def handle_media(bot: Client, message: Message):
             quote=True,
             disable_web_page_preview=True
         )
-    elif message.chat.type == filters.ChatType.CHANNEL:
-        # Handle messages in channels if needed
+    if message.chat.type == "channel":
+    # Handle the channel message
         pass
 
 # Handle broadcasting messages
