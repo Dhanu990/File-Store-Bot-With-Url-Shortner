@@ -16,7 +16,7 @@ from pyrogram.errors import (
 
 broadcast_ids = {}  # Initialize the broadcast_ids dictionary
 
-async def send_msg(user_id, message):
+async def main_broadcast_handler(m, db):
     # Your existing send_msg function
 
 async def main_broadcast_handler(m, db):
