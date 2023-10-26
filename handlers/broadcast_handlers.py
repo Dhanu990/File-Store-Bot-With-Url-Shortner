@@ -14,28 +14,10 @@ from pyrogram.errors import (
     PeerIdInvalid
 )
 
-broadcast_ids = {}
-
+broadcast_ids = {}  # Initialize the broadcast_ids dictionary
 
 async def send_msg(user_id, message):
-    try:
-        if Config.BROADCAST_AS_COPY is False:
-            await message.forward(chat_id=user_id)
-        elif Config.BROADCAST_AS_COPY is True:
-            await message.copy(chat_id=user_id)
-        return 200, None
-    except FloodWait as e:
-        await asyncio.sleep(e.value)
-        return send_msg(user_id, message)
-    except InputUserDeactivated:
-        return 400, f"{user_id} : deactivated\n"
-    except UserIsBlocked:
-        return 400, f"{user_id} : blocked the bot\n"
-    except PeerIdInvalid:
-        return 400, f"{user_id} : user id invalid\n"
-    except Exception as e:
-        return 500, f"{user_id} : {traceback.format_exc()}\n"
-
+    # Your existing send_msg function
 
 async def main_broadcast_handler(m, db):
     all_users = await db.get_all_users()
@@ -45,7 +27,7 @@ async def main_broadcast_handler(m, db):
         if not broadcast_ids.get(broadcast_id):
             break
     out = await m.reply_text(
-        text=f"Broadcast Started! You will be notified with log file when all the users are notified."
+        text=f"Broadcast Started! You will be notified with a log file when all the users are notified."
     )
     start_time = time.time()
     total_users = await db.total_users_count()
@@ -90,13 +72,14 @@ async def main_broadcast_handler(m, db):
     await out.delete()
     if failed == 0:
         await m.reply_text(
-            text=f"broadcast completed in `{completed_in}`\n\nTotal users {total_users}.\nTotal done {done}, {success} success and {failed} failed.",
+            text=f"Broadcast completed in `{completed_in}`\n\nTotal users {total_users}.\nTotal done {done}, {success} success and {failed} failed.",
             quote=True
         )
     else:
         await m.reply_document(
             document='broadcast.txt',
-            caption=f"broadcast completed in `{completed_in}`\n\nTotal users {total_users}.\nTotal done {done}, {success} success and {failed} failed.",
+            caption=f"Broadcast completed in `{completed_in}`\n\nTotal users {total_users}.\nTotal done {done}, {success} success and {failed} failed.",
             quote=True
         )
     await aiofiles.os.remove('broadcast.txt')
+    
